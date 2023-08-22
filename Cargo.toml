@@ -13,7 +13,7 @@ repository = "https://github.com/Synphonyte/leptos-use"
 homepage = "https://leptos-use.rs"
 
 [dependencies]
-leptos = { git = "https://github.com/leptos-rs/leptos", branch = "effect-cleanups" }
+leptos = { git = "https://github.com/leptos-rs/leptos" }
 wasm-bindgen = "0.2"
 js-sys = "0.3"
 default-struct-builder = "0.5"
