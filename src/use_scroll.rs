@@ -5,7 +5,6 @@ use cfg_if::cfg_if;
 use default_struct_builder::DefaultBuilder;
 use leptos::ev::EventDescriptor;
 use leptos::*;
-use std::borrow::Cow;
 use std::rc::Rc;
 use wasm_bindgen::JsCast;
 
@@ -534,12 +533,12 @@ impl EventDescriptor for scrollend {
     type EventType = web_sys::Event;
 
     #[inline(always)]
-    fn name(&self) -> Cow<'static, str> {
+    fn name(&self) -> Oco<'static, str> {
         "scrollend".into()
     }
 
     #[inline(always)]
-    fn event_delegation_key(&self) -> Cow<'static, str> {
+    fn event_delegation_key(&self) -> Oco<'static, str> {
         "$$$scrollend".into()
     }
 
