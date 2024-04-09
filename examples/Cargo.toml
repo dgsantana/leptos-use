@@ -69,6 +69,9 @@ exclude = [
     "use_webtransport_with_server",
 ]
 
+[workspace.dependencies]
+leptos = { git = "https://github.com/dgsantana/leptos", branch = "novartis", default-features = false }
+
 [package]
 name = "leptos-use-examples"
 version = "0.3.3"
