@@ -1,7 +1,7 @@
 use crate::core::ElementMaybeSignal;
 use crate::{UseDocument, UseWindow};
 use cfg_if::cfg_if;
-use leptos::html::ElementDescriptor;
+use leptos::html::HtmlElement;
 use leptos::prelude::wrappers::read::Signal;
 use leptos::prelude::*;
 use std::marker::PhantomData;
@@ -45,30 +45,20 @@ where
     }
 }
 
-impl<T, E> SignalGet for ElementsMaybeSignal<T, E>
+impl<T, E> DefinedAt for ElementsMaybeSignal<T, E>
 where
     T: Into<E> + Clone + 'static,
 {
-    type Value = Vec<Option<T>>;
-
-    fn get(&self) -> Vec<Option<T>> {
+    fn defined_at(&self) -> Option<&'static std::panic::Location<'static>> {
         match self {
-            Self::Static(v) => v.clone(),
-            Self::Dynamic(s) => s.get(),
-            Self::_Phantom(_) => unreachable!(),
-        }
-    }
-
-    fn try_get(&self) -> Option<Vec<Option<T>>> {
-        match self {
-            Self::Static(v) => Some(v.clone()),
-            Self::Dynamic(s) => s.try_get(),
+            Self::Static(_) => None,
+            Self::Dynamic(s) => s.defined_at(),
             Self::_Phantom(_) => unreachable!(),
         }
     }
 }
 
-impl<T, E> SignalWith for ElementsMaybeSignal<T, E>
+impl<T, E> With for ElementsMaybeSignal<T, E>
 where
     T: Into<E> + Clone + 'static,
 {
@@ -91,7 +81,7 @@ where
     }
 }
 
-impl<T, E> SignalWithUntracked for ElementsMaybeSignal<T, E>
+impl<T, E> WithUntracked for ElementsMaybeSignal<T, E>
 where
     T: Into<E> + Clone + 'static,
 {
@@ -109,29 +99,6 @@ where
         match self {
             Self::Static(t) => Some(f(t)),
             Self::Dynamic(s) => s.try_with_untracked(f),
-            Self::_Phantom(_) => unreachable!(),
-        }
-    }
-}
-
-impl<T, E> SignalGetUntracked for ElementsMaybeSignal<T, E>
-where
-    T: Into<E> + Clone + 'static,
-{
-    type Value = Vec<Option<T>>;
-
-    fn get_untracked(&self) -> Vec<Option<T>> {
-        match self {
-            Self::Static(t) => t.clone(),
-            Self::Dynamic(s) => s.get_untracked(),
-            Self::_Phantom(_) => unreachable!(),
-        }
-    }
-
-    fn try_get_untracked(&self) -> Option<Vec<Option<T>>> {
-        match self {
-            Self::Static(t) => Some(t.clone()),
-            Self::Dynamic(s) => s.try_get_untracked(),
             Self::_Phantom(_) => unreachable!(),
         }
     }
@@ -315,7 +282,7 @@ impl_from_node_ref!(web_sys::Element);
 
 macro_rules! impl_from_html_element {
     ($ty:ty) => {
-        impl<HtmlEl> From<HtmlElement<HtmlEl>> for ElementsMaybeSignal<$ty, $ty>
+        impl<HtmlEl> From<HtmlElement<HtmlEl, _, _, _>> for ElementsMaybeSignal<$ty, $ty>
         where
             HtmlEl: ElementDescriptor + std::ops::Deref<Target = $ty>,
         {
