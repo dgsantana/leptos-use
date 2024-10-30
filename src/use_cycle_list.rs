@@ -41,7 +41,7 @@ pub fn use_cycle_list<T, L>(
 >
 where
     T: Clone + PartialEq + Send + Sync + 'static,
-    L: Into<MaybeSignal<Vec<T>>>,
+    L: Into<Signal<Vec<T>>>,
 {
     use_cycle_list_with_options(list, UseCycleListOptions::default())
 }
@@ -58,7 +58,7 @@ pub fn use_cycle_list_with_options<T, L>(
 >
 where
     T: Clone + PartialEq + Send + Sync + 'static,
-    L: Into<MaybeSignal<Vec<T>>>,
+    L: Into<Signal<Vec<T>>>,
 {
     let UseCycleListOptions {
         initial_value,
@@ -84,8 +84,6 @@ where
     let (state, set_state) = get_initial_value().into_signal();
 
     let index = {
-        let list = list.clone();
-
         Signal::derive(move || {
             list.with(|list| {
                 let index = get_position(&state.get(), list);
@@ -100,8 +98,6 @@ where
     };
 
     let set = {
-        let list = list.clone();
-
         move |i: usize| {
             list.with(|list| {
                 let length = list.len();
@@ -121,9 +117,6 @@ where
     };
 
     let shift = {
-        let list = list.clone();
-        let set = set.clone();
-
         move |delta: i64| {
             let index = list.with(|list| {
                 let length = list.len() as i64;
@@ -137,26 +130,18 @@ where
     };
 
     let next = {
-        let shift = shift.clone();
-
         move || {
             shift(1);
         }
     };
 
     let prev = {
-        let shift = shift.clone();
-
         move || {
             shift(-1);
         }
     };
 
-    let _ = {
-        let set = set.clone();
-
-        Effect::watch(move || list.get(), move |_, _, _| set(index.get()), false)
-    };
+    let _ = { Effect::watch(move || list.get(), move |_, _, _| set(index.get()), false) };
 
     UseCycleListReturn {
         state,

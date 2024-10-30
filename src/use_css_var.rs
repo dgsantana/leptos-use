@@ -78,7 +78,7 @@ use wasm_bindgen::JsCast;
 ///
 /// On the server this simply returns `signal(options.initial_value)`.
 pub fn use_css_var(
-    prop: impl Into<MaybeSignal<String>>,
+    prop: impl Into<Signal<String>>,
 ) -> (ReadSignal<String>, WriteSignal<String>) {
     use_css_var_with_options(prop, UseCssVarOptions::default())
 }
@@ -89,7 +89,7 @@ pub fn use_css_var_with_options<P, El, M>(
     options: UseCssVarOptions<El, M>,
 ) -> (ReadSignal<String>, WriteSignal<String>)
 where
-    P: Into<MaybeSignal<String>>,
+    P: Into<Signal<String>>,
     El: Clone,
     El: IntoElementMaybeSignal<web_sys::Element, M>,
 {
@@ -108,7 +108,6 @@ where
         let prop = prop.into();
 
         let update_css_var = {
-            let prop = prop.clone();
             let el_signal = el_signal.clone();
 
             move || {
@@ -144,7 +143,6 @@ where
 
         {
             let el_signal = el_signal.clone();
-            let prop = prop.clone();
 
             let _ = watch_with_options(
                 move || (el_signal.get(), prop.get()),

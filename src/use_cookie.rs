@@ -205,7 +205,7 @@ where
 
         handle_expiration(delay, set_cookie);
     } else {
-        debug_warn!(
+        leptos::logging::debug_warn!(
             "not setting cookie '{}' because it has already expired",
             cookie_name
         );
@@ -550,7 +550,7 @@ impl<T, E, D> Default for UseCookieOptions<T, E, D> {
                 let _ = cookie;
             }),
             on_error: Arc::new(|_| {
-                error!("cookie (de-/)serialization error");
+                leptos::logging::error!("cookie (de-/)serialization error");
             }),
         }
     }
@@ -766,7 +766,7 @@ fn build_cookie_from_options(
                 cookie = cookie.expires(expires);
             }
             Err(err) => {
-                debug_warn!("failed to set cookie expiration: {:?}", err);
+                leptos::logging::debug_warn!("failed to set cookie expiration: {:?}", err);
             }
         }
     }

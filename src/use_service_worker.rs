@@ -112,7 +112,7 @@ pub fn use_service_worker_with_options(
             }
             Err(err) => match err {
                 ServiceWorkerRegistrationError::Js(err) => {
-                    warn!("ServiceWorker registration failed: {err:?}")
+                    leptos::logging::warn!("ServiceWorker registration failed: {err:?}")
                 }
                 ServiceWorkerRegistrationError::NeverQueried => {}
             },
@@ -153,13 +153,13 @@ pub fn use_service_worker_with_options(
             registration.with_untracked(|reg| if let Ok(reg) = reg {
                 match reg.waiting() {
                     Some(sw) => {
-                        debug_warn!("Updating to newly installed SW...");
+                        leptos::logging::debug_warn!("Updating to newly installed SW...");
                         if let Err(err) = sw.post_message(&JsValue::from_str(&options.skip_waiting_message)) {
-                            warn!("Could not send message to active SW: Error: {err:?}");
+                            leptos::logging::warn!("Could not send message to active SW: Error: {err:?}");
                         }
                     },
                     None => {
-                        warn!("You tried to update the SW while no new SW was waiting. This is probably a bug.");
+                        leptos::logging::warn!("You tried to update the SW while no new SW was waiting. This is probably a bug.");
                     },
                 }
             });
@@ -195,7 +195,7 @@ impl Default for UseServiceWorkerOptions {
                 use std::ops::Deref;
                 if let Some(window) = use_window().deref() {
                     if let Err(err) = window.location().reload() {
-                        warn!(
+                        leptos::logging::warn!(
                             "Detected a ServiceWorkerController change but the page reload failed! Error: {err:?}"
                         );
                     }
